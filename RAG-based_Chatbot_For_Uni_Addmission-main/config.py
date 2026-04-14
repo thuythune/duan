@@ -3,7 +3,7 @@ DOC_PATH = "./input3.pdf"
 PERSIST_DIRECTORY = "./chroma_db_beta_rag" # Directory to store the Chroma vector database
 
 # --- Model Names ---
-MODEL_NAME = "qwen2.5:3b"
+MODEL_NAME = "gemma2:2b"
 EMBEDDING_MODEL = "bge-m3"
 
 # --- Vector Store ---
