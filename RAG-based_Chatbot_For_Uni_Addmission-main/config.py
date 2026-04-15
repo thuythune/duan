@@ -9,6 +9,10 @@ EMBEDDING_MODEL = "bge-m3"
 # --- Vector Store ---
 VECTOR_STORE_NAME = "beta-rag"
 
+# --- History Store ---
+HISTORY_PERSIST_DIRECTORY = "./chroma_db_history"
+HISTORY_COLLECTION_NAME = "chat-history"
+
 # --- Text Splitting ---
 CHUNK_SIZE = 800
 CHUNK_OVERLAP = 150

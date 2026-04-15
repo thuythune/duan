@@ -37,10 +37,22 @@ def get_retriever(_vector_db, _llm):
     return retriever
 
 
-def get_rag_chain(_retriever, _llm):
+def get_history_retriever(_history_db):
+    """
+    Creates a retriever for Q&A history.
+    """
+    if _history_db is None:
+        logging.warning("History DB is None, cannot create history retriever.")
+        return None
+    logging.info("Creating History Retriever.")
+    return _history_db.as_retriever(search_kwargs={"k": 2})
+
+
+def get_rag_chain(_retriever, _history_retriever, _llm):
     """
     Creates the RAG chain.
-    _retriever: The cached retriever instance.
+    _retriever: The cached document retriever instance.
+    _history_retriever: The cached history retriever instance.
     _llm: The cached LLM instance.
     """
     if _retriever is None or _llm is None:
@@ -54,15 +66,29 @@ LƯU Ý QUAN TRỌNG:
 1. Câu trả lời CỦA BẠN PHẢI HOÀN TOÀN BẰNG TIẾNG VIỆT.
 2. Hãy trả lời thật NGẮN GỌN, đi thẳng vào trọng tâm câu hỏi. KHÔNG giải thích dài dòng hoặc đưa thêm thông tin thừa không được hỏi.
 
-Bối cảnh:
+Bối cảnh từ tài liệu tuyển sinh:
 {context}
+
+Lịch sử trò chuyện liên quan (nếu có):
+{history}
 
 Câu hỏi: {question}
 Câu trả lời (bằng Tiếng Việt):
 """
     prompt = ChatPromptTemplate.from_template(template)
+    
+    def get_history(query):
+        if _history_retriever:
+            docs = _history_retriever.invoke(query)
+            return "\n\n".join([doc.page_content for doc in docs])
+        return "Không có."
+
     chain = (
-            {"context": _retriever, "question": RunnablePassthrough()}
+            {
+                "context": _retriever, 
+                "history": get_history,
+                "question": RunnablePassthrough()
+            }
             | prompt
             | _llm
             | StrOutputParser()

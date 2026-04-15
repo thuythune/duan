@@ -4,7 +4,7 @@ import logging
 from langchain_community.vectorstores import Chroma
 import ollama
 
-from config import PERSIST_DIRECTORY, VECTOR_STORE_NAME, DOC_PATH, EMBEDDING_MODEL
+from config import PERSIST_DIRECTORY, VECTOR_STORE_NAME, DOC_PATH, EMBEDDING_MODEL, HISTORY_PERSIST_DIRECTORY, HISTORY_COLLECTION_NAME
 from data_handler import ingest_pdf, split_documents
 from llm_services import get_embedding_model
 
@@ -73,3 +73,42 @@ def load_or_create_vector_db():
         logging.error(f"Failed to create vector database: {e}")
         logging.error(f"An error occurred while creating the vector database: {e}")
         return None
+
+
+def load_or_create_history_db():
+    """
+    Loads or creates the vector database for Q&A history.
+    """
+    embedding_function = get_embedding_model()
+    if embedding_function is None:
+        logging.error("Embedding model failed to initialize. Cannot proceed with History Vector DB.")
+        return None
+
+    try:
+        os.makedirs(HISTORY_PERSIST_DIRECTORY, exist_ok=True)
+        history_db = Chroma(
+            embedding_function=embedding_function,
+            collection_name=HISTORY_COLLECTION_NAME,
+            persist_directory=HISTORY_PERSIST_DIRECTORY,
+        )
+        logging.info("Successfully loaded or created history vector database.")
+        return history_db
+    except Exception as e:
+        logging.error(f"Error initializing history vector database: {e}")
+        return None
+
+
+def save_to_history(history_db, question: str, answer: str):
+    """
+    Saves a Q&A pair into the history vector database.
+    """
+    if history_db is None:
+        logging.warning("History DB is None, cannot save Q&A history.")
+        return
+        
+    try:
+        text = f"Người dùng hỏi: {question}\nChatbot trả lời: {answer}"
+        history_db.add_texts([text])
+        logging.info("Saved Q&A pair to history.")
+    except Exception as e:
+        logging.error(f"Failed to save Q&A to history: {e}")
