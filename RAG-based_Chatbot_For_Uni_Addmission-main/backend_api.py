@@ -14,7 +14,7 @@ from utils import setup_logging
 setup_logging()
 
 # Khởi tạo FastAPI
-app = FastAPI(title="E-JUST Admisson RAG API")
+app = FastAPI(title="ICTU AI Admission API")
 
 # Cấu hình CORS để Next.js (chạy port 3000) có thể giao tiếp
 app.add_middleware(

@@ -60,6 +60,7 @@ export default function Chatbot() {
       {/* Sidebar */}
       <aside className="sidebar">
         <div className="sidebar-header">
+          <Link href="/" className="back-link">← Trang chủ</Link>
           <h2>Lịch sử chat</h2>
         </div>
         <button className="new-chat-btn" onClick={() => setMessages([{ role: "ai", content: "Xin chào! Mình là trợ lý AI tuyển sinh của Đại học CNTT & TT (ICTU). Mình có thể giúp gì cho bạn hôm nay?" }])}> + Đoạn chat mới</button>
