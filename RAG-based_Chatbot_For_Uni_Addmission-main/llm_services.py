@@ -6,14 +6,19 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 
 
-from config import MODEL_NAME, EMBEDDING_MODEL
+from langchain_openai import ChatOpenAI
+from config import MODEL_NAME, EMBEDDING_MODEL, OPENROUTER_API_KEY
 from prompts import RAG_PROMPT_TEMPLATE
 
 
 def get_llm():
-    """Initializes and returns the ChatOllama LLM instance."""
-    logging.info(f"Initializing LLM: {MODEL_NAME}")
-    return ChatOllama(model=MODEL_NAME)
+    """Initializes and returns the ChatOpenAI LLM instance through OpenRouter."""
+    logging.info(f"Initializing Cloud LLM via OpenRouter: {MODEL_NAME}")
+    return ChatOpenAI(
+        model=MODEL_NAME,
+        api_key=OPENROUTER_API_KEY,
+        base_url="https://openrouter.ai/api/v1"
+    )
 
 
 def get_embedding_model():
@@ -34,7 +39,7 @@ def get_retriever(_vector_db, _llm):
 
     logging.info("Creating Standard Retriever.")
     # Sử dụng retriever mặc định để tốc độ nhanh gọn nhất
-    retriever = _vector_db.as_retriever(search_kwargs={"k": 4})
+    retriever = _vector_db.as_retriever(search_kwargs={"k": 7})
     return retriever
 
 

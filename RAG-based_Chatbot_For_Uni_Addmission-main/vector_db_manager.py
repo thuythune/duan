@@ -1,4 +1,5 @@
 import os
+import shutil
 import logging
 
 from langchain_chroma import Chroma
@@ -85,6 +86,10 @@ def load_or_create_history_db():
         return None
 
     try:
+        # Xóa sạch cặn lịch sử cũ mỗi khi khởi động lại Server
+        if os.path.exists(HISTORY_PERSIST_DIRECTORY):
+            shutil.rmtree(HISTORY_PERSIST_DIRECTORY)
+            
         os.makedirs(HISTORY_PERSIST_DIRECTORY, exist_ok=True)
         history_db = Chroma(
             embedding_function=embedding_function,

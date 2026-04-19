@@ -12,3 +12,4 @@ langchain-chroma
 fastapi
 uvicorn
 pydantic
+langchain-openai
