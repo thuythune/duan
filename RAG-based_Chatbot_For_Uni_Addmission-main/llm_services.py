@@ -7,6 +7,7 @@ from langchain_core.runnables import RunnablePassthrough
 
 
 from config import MODEL_NAME, EMBEDDING_MODEL
+from prompts import RAG_PROMPT_TEMPLATE
 
 
 def get_llm():
@@ -60,22 +61,7 @@ def get_rag_chain(_retriever, _history_retriever, _llm):
         return None
 
     logging.info("Creating RAG chain.")
-    template = """Bạn là một trợ lý AI hữu ích. Hãy trả lời câu hỏi DỰA TRÊN bối cảnh được cung cấp dưới đây. 
-Nếu bối cảnh không có thông tin, hãy trả lời rằng bạn không tìm thấy thông tin trong tài liệu. 
-LƯU Ý QUAN TRỌNG: 
-1. Câu trả lời CỦA BẠN PHẢI HOÀN TOÀN BẰNG TIẾNG VIỆT.
-2. Hãy trả lời thật NGẮN GỌN, đi thẳng vào trọng tâm câu hỏi. KHÔNG giải thích dài dòng hoặc đưa thêm thông tin thừa không được hỏi.
-
-Bối cảnh từ tài liệu tuyển sinh:
-{context}
-
-Lịch sử trò chuyện liên quan (nếu có):
-{history}
-
-Câu hỏi: {question}
-Câu trả lời (bằng Tiếng Việt):
-"""
-    prompt = ChatPromptTemplate.from_template(template)
+    prompt = ChatPromptTemplate.from_template(RAG_PROMPT_TEMPLATE)
     
     def get_history(query):
         if _history_retriever:
