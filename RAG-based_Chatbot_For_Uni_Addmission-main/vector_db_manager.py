@@ -1,7 +1,7 @@
 import os
 import logging
 
-from langchain_community.vectorstores import Chroma
+from langchain_chroma import Chroma
 import ollama
 
 from config import PERSIST_DIRECTORY, VECTOR_STORE_NAME, DOC_PATH, EMBEDDING_MODEL, HISTORY_PERSIST_DIRECTORY, HISTORY_COLLECTION_NAME
